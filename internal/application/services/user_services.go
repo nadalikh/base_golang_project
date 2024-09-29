@@ -13,6 +13,7 @@ type UserService interface {
 	FindByID(id string) (*entity.User, error)
 	FindByEmail(email string) (*entity.User, error)
 	Login(email, password string) (string, error)
+	GetAll() (*[]entity.User, error)
 }
 
 type userServiceImpl struct {
@@ -49,11 +50,8 @@ func (s *userServiceImpl) FindByEmail(email string) (*entity.User, error) {
 }
 func (s *userServiceImpl) Login(email, password string) (string, error) {
 	cmd := command.LoginUserCommand{Email: email, Password: password}
-	//user, err := s.userRepository.FindByEmail(email)
-	//if err != nil {
-	//	return "", err
-	//}
-	//return s.loginUserHandler.Handle(cmd, user)
 	return s.loginUserHandler.Handle(cmd)
-
+}
+func (s *userServiceImpl) GetAll() (*[]entity.User, error) {
+	return s.userRepository.GetAll()
 }

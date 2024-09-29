@@ -62,8 +62,14 @@ func (c *UserController) GetUserByEmail(ctx *gin.Context) {
 		ctx.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return
 	}
-
 	ctx.JSON(http.StatusOK, user)
+}
+func (c *UserController) GetAll(ctx *gin.Context) {
+	users, err := c.userService.GetAll()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+	ctx.JSON(http.StatusOK, users)
 }
 
 func (c *UserController) Login(ctx *gin.Context) {
@@ -76,9 +82,10 @@ func (c *UserController) Login(ctx *gin.Context) {
 		return
 	}
 	token, err := c.userService.Login(loginDTO.Email, loginDTO.Password)
-	if err != nil {
-		panic(err)
-
+	var invalidValidationError *validator.InvalidValidationError
+	if !errors.As(err, &invalidValidationError) {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"token": token})
 }

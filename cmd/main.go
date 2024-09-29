@@ -28,7 +28,7 @@ func init() {
 
 	// Dependency injection for repository and services
 	userRepository := persistence.NewMySQLUserRepository(database)
-	validationService := validation.NewValidationService()
+	validationService := validation.NewValidationService(userRepository)
 	jwtService := auth.NewJWTService("secret", "nadali")
 	createUserHandler := handler.NewCreateUserCommandHandler(userRepository, validationService)
 	loginUserHandler := handler.NewLoginUserCommandHandler(userRepository, validationService, jwtService)
@@ -38,7 +38,7 @@ func init() {
 	userController = rest.NewUserController(userService)
 
 	// Setup HTTP routes
-	router = http.SetupRoutes(userController)
+	router = http.SetupRoutes(userController, jwtService)
 }
 
 func main() {

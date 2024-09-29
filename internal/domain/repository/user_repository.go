@@ -8,4 +8,6 @@ type UserRepository interface {
 	Save(user *entity.User) error
 	FindByID(id string) (*entity.User, error)
 	FindByEmail(email string) (*entity.User, error)
+	IsEmailTaken(email string) (bool, error)
+	GetAll() (*[]entity.User, error)
 }
